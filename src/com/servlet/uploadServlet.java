@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.UUID;
 
@@ -122,14 +124,33 @@ public class uploadServlet extends HttpServlet {
 					//创建文件输出流
 					FileOutputStream fos = new FileOutputStream(finalfilePath+File.separator+finalfileName);
 					
+					/**
 					byte[] buf = new byte[2*1024];
 					
 					int length = 0;
 					
 					while((length= in.read(buf))>0){
 						fos.write(buf, 0, length);
-					}
+					}**/
+					//异步io来读取
+					//获取读通道
+					FileChannel readChanel = ((FileInputStream)in).getChannel();
 					
+					//获取写通道
+					FileChannel writeChanel = fos.getChannel();
+					
+					ByteBuffer buffer = ByteBuffer.allocate(1024);
+					while(true){
+						buffer.clear();
+						int len = readChanel.read(buffer);
+						if(len<0){
+							//读取完毕
+							break;							
+						}
+						buffer.flip();
+						writeChanel.write(buffer);
+					}
+					//关闭流
 					in.close();
 					fos.close();
 					item.delete();
