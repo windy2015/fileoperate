@@ -124,15 +124,16 @@ public class uploadServlet extends HttpServlet {
 					//创建文件输出流
 					FileOutputStream fos = new FileOutputStream(finalfilePath+File.separator+finalfileName);
 					
-					/**
+					
 					byte[] buf = new byte[2*1024];
 					
 					int length = 0;
 					
 					while((length= in.read(buf))>0){
 						fos.write(buf, 0, length);
-					}**/
-					//异步io来读取
+					}
+					
+					/*//异步io来读取
 					//获取读通道
 					FileChannel readChanel = ((FileInputStream)in).getChannel();
 					
@@ -149,7 +150,7 @@ public class uploadServlet extends HttpServlet {
 						}
 						buffer.flip();
 						writeChanel.write(buffer);
-					}
+					}*/
 					//关闭流
 					in.close();
 					fos.close();
